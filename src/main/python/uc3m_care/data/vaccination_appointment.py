@@ -3,6 +3,8 @@ from datetime import datetime
 import hashlib
 from freezegun import freeze_time
 
+from uc3m_care.data.attribute.attribute_cancellation_reason import CancellationReason
+from uc3m_care.data.attribute.attribute_cancellation_type import CancellationType
 from uc3m_care.data.attribute.attribute_iso_date import ISOFormat
 from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
@@ -10,11 +12,14 @@ from uc3m_care.data.attribute.attribute_date_signature import DateSignature
 from uc3m_care.data.vaccination_log import VaccinationLog
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
+from uc3m_care.parser.cancellation_json_parser import CancellationJsonParser
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 
-
 # pylint: disable=too-many-instance-attributes
+from uc3m_care.storage.cancellations_json_store import CancellationsJsonStore
+
+
 class VaccinationAppointment:
     """Class representing an appointment  for the vaccination of a patient"""
 
@@ -111,9 +116,28 @@ class VaccinationAppointment:
             datetime.fromtimestamp(appointment_record["_VaccinationAppointment__issued_at"]))
         freezer.start()
         appointment = cls(appointment_record["_VaccinationAppointment__patient_sys_id"],
-                          appointment_record["_VaccinationAppointment__phone_number"], datetime.fromtimestamp(appointment_record["_VaccinationAppointment__appointment_date"]).isoformat())
+                          appointment_record["_VaccinationAppointment__phone_number"], datetime.fromtimestamp(
+                appointment_record["_VaccinationAppointment__appointment_date"]).isoformat())
         freezer.stop()
         return appointment
+
+    @classmethod
+    def get_cancellation_from_json_file(cls, json_file):
+        cancellation_parser = CancellationJsonParser(json_file)
+        cls.is_cancelable(cancellation_parser)
+        cancellations_store = CancellationsJsonStore()
+        cancellation_record = cancellations_store.find_item(
+            cancellation_parser.json_content[cancellation_parser.DATE_SIGNATURE])
+        if cancellation_record is None:
+            return True
+        if cancellation_record.reason == "Final":
+            raise VaccineManagementException("Appointment cancellation is FINAL")
+
+    @classmethod
+    def is_cancelable(cls, cancellation_parser):
+        CancellationType(cancellation_parser.json_content[cancellation_parser.CANCELLATION_TYPE])
+        DateSignature(cancellation_parser.json_content[cancellation_parser.DATE_SIGNATURE])
+        CancellationReason(cancellation_parser.json_content[cancellation_parser.REASON])
 
     @classmethod
     def create_appointment_from_json_file(cls, json_file, iso_date):

@@ -41,7 +41,10 @@ class VaccineManager:
             appointment = VaccinationAppointment.get_appointment_from_date_signature(date_signature)
             return appointment.register_vaccination()
 
-        # def cancel_appointment(self, input_file):
+        def cancel_appointment(self, input_file):
+            pass
+            appointment = VaccinationAppointment.get_cancellation_from_json_file(input_file)
+
         # añadir parámetro en vaccine appointment para comprobar cita temporal o permamnente
 
     instance = None
