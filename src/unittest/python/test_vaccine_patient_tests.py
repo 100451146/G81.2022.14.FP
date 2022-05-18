@@ -9,6 +9,7 @@ from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
 
+DATE_ISO = "2022-03-18"
 
 class TestVaccinePatient(TestCase):
     """Class for testing vaccine patient"""
@@ -28,14 +29,14 @@ class TestVaccinePatient(TestCase):
         my_manager.request_vaccination_id("78924cb0-075a-4099-a3ee-f3b562e805b9",
                                           "minombre tienelalongitudmaxima", "Regular",
                                           "+34123456789", "6")
-        my_manager.get_vaccine_date(file_test)
+        my_manager.get_vaccine_date(file_test, "2022-03-18")
 
         my_manager.request_vaccination_id("57c811e5-3f5a-4a89-bbb8-11c0464d53e6",
                                           "minombre tieneuncharmenosqmax", "Family",
                                           "+34333456789", "7")
         file_test = JSON_FILES_RF2_PATH + "test_ok_2.json"
 
-        my_manager.get_vaccine_date(file_test)
+        my_manager.get_vaccine_date(file_test, DATE_ISO)
 
     @freeze_time("2022-03-18")
     def test_vaccine_patient_ok(self):
