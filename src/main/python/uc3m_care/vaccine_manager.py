@@ -45,7 +45,7 @@ class VaccineManager:
             pass
             appointment = VaccinationAppointment.get_cancellation_from_json_file(input_file)
 
-        # añadir parámetro en vaccine appointment para comprobar cita temporal o permamnente
+        # añadir parámetro en vaccine appointment para comprobar cita temporal o definitiva
 
     instance = None
 
