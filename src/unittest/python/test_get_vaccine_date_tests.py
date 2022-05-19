@@ -18,7 +18,7 @@ param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format")
                   ("test_dup_comma.json", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_content.json", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_data1.json", "JSON Decode Error - Wrong JSON Format"),
-                  (a"test_dup_data1_content.json", "patient system id is not valid"),
+                  ("test_dup_data1_content.json", "patient system id is not valid"),
                   ("test_dup_data2.json", "JSON Decode Error - Wrong JSON Format"),
                   ("test_dup_data2_content.json", "phone number is not valid"),
                   ("test_dup_field1.json", "JSON Decode Error - Wrong JSON Format"),
