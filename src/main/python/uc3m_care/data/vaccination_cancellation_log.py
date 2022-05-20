@@ -7,9 +7,10 @@ from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 class VaccinationCancellationLog:
     """Class representing an entry of the Vaccine administration log"""
 
-    def __init__(self, date_signature):
+    def __init__(self, date_signature, type: str, reason: str):
         self.__date_signature = date_signature
-        self.__reason = datetime.timestamp(datetime.utcnow())
+        self.__type = type
+        self.__reason = reason
 
     def save_log_entry(self):
         """saves the entry in the vaccine administration log"""
@@ -20,6 +21,11 @@ class VaccinationCancellationLog:
     def date_signature(self):
         """returns the value of the date_signature"""
         return self.__date_signature
+
+    @property
+    def type(self):
+        """returns the value of the type"""
+        return self.__type
 
     @property
     def vaccination_reason(self):

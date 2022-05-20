@@ -125,12 +125,11 @@ class VaccinationAppointment:
     def get_cancellation_from_json_file(cls, json_file):
         cancellation_parser = CancellationJsonParser(json_file)
         cls.is_cancelable(cancellation_parser)
-        cancellations_store = CancellationsJsonStore()
-        cancellation_record = cancellations_store.find_item(
-            cancellation_parser.json_content[cancellation_parser.DATE_SIGNATURE])
-        if cancellation_record is None:
-            return True
-        if cancellation_record.reason == "Final":
+        cancellation = CancellationsJsonStore().find_item(
+            cancellation_parser.json_content[cancellation_parser.DATE_SIGNATURE], "_VaccinationCancellation__date_signature")
+        if cancellation is None:
+            raise VaccineManagementException("cancellation is not found")
+        if cancellation["_VaccinationCancellation__cancellation_type"] == "Final":
             raise VaccineManagementException("Appointment cancellation is FINAL")
 
     @classmethod
@@ -170,7 +169,21 @@ class VaccinationAppointment:
 
     def register_vaccination(self):
         """register the vaccine administration"""
-        if self.is_valid_today():
+        self.is_valid_today()
+        if not self.is_cancelled(self.date_signature):
             vaccination_log_entry = VaccinationLog(self.date_signature)
             vaccination_log_entry.save_log_entry()
         return True
+
+    @staticmethod
+    def is_cancelled(date_signature):
+        """checks if the appointment is cancelled"""
+        cancellations_store = CancellationsJsonStore()
+        cancellation_record = cancellations_store.find_item(date_signature, "_VaccinationCancellation__date_signature")
+        if cancellation_record is None:
+            return False
+        if cancellation_record["_VaccinationCancellation__cancellation_type"] == "Final":
+            raise VaccineManagementException("Appointment cancellation is FINAL")
+        if cancellation_record["_VaccinationCancellation__cancellation_type"] == "Temporal":
+            raise VaccineManagementException("Appointment has been cancelled")
+        raise VaccineManagementException("Unexpected behaviour")
