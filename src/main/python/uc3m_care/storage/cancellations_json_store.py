@@ -1,7 +1,6 @@
 """Subclass of JsonStore for managing the Patients store"""
 from uc3m_care.storage.json_store import JsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
-from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
 
 class CancellationsJsonStore:
@@ -50,6 +49,3 @@ class CancellationsJsonStore:
     def __setattr__(self, name, value):
         return setattr(self.instance, name, value)
 
-    def delete():
-        """Delete the store"""
-        CancellationsJsonStore.instance = None

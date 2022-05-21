@@ -1,5 +1,4 @@
 """Class representing an entry of the vaccine administration log"""
-from datetime import datetime
 from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 
 
@@ -7,9 +6,9 @@ from uc3m_care.storage.vaccination_json_store import VaccinationJsonStore
 class VaccinationCancellationLog:
     """Class representing an entry of the Vaccine administration log"""
 
-    def __init__(self, date_signature, type: str, reason: str):
+    def __init__(self, date_signature, cancellation_type: str, reason: str):
         self.__date_signature = date_signature
-        self.__type = type
+        self.__type = cancellation_type
         self.__reason = reason
 
     def save_log_entry(self):
@@ -28,6 +27,6 @@ class VaccinationCancellationLog:
         return self.__type
 
     @property
-    def vaccination_reason(self):
+    def reason(self):
         """returns the timestamp corresponding to the date of administration """
         return self.__reason

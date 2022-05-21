@@ -1,6 +1,4 @@
 """Module """
-from datetime import datetime
-
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.data.vaccination_appointment import VaccinationAppointment
 
@@ -43,6 +41,7 @@ class VaccineManager:
             return appointment.register_vaccination()
 
         def cancel_appointment(self, input_file) -> bool:
+            """Cancel a vaccination appointment"""
             cancellation = VaccinationAppointment.get_cancellation_from_json_file(input_file)
             appointment = VaccinationAppointment.get_appointment_from_date_signature(cancellation.date_signature)
             VaccinationAppointment.register_cancellation(appointment, cancellation)
