@@ -45,8 +45,8 @@ class VaccineManager:
         def cancel_appointment(self, input_file) -> bool:
             cancellation = VaccinationAppointment.get_cancellation_from_json_file(input_file)
             appointment = VaccinationAppointment.get_appointment_from_date_signature(cancellation.date_signature)
-            VaccinationAppointment.is_valid_future(datetime.fromtimestamp(appointment.appointment_date).isoformat())
-            return True
+            VaccinationAppointment.register_cancellation(appointment, cancellation)
+            return cancellation.date_signature
 
 
 
