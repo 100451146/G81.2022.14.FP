@@ -17,6 +17,8 @@ from uc3m_care.parser.appointment_json_parser import AppointmentJsonParser
 from uc3m_care.parser.cancellation_json_parser import CancellationJsonParser
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.cancellations_json_store import CancellationsJsonStore
+from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
+from uc3m_care.enumerations.attrubute_enum import AttributeEnum
 
 # pylint: disable=too-many-instance-attributes
 class VaccinationAppointment:
@@ -121,13 +123,13 @@ class VaccinationAppointment:
         appointments_store = AppointmentsJsonStore()
         appointment_record = appointments_store.find_item(DateSignature(date_signature).value)
         if appointment_record is None:
-            raise VaccineManagementException("There is not an appointment with this date_signature")
+            raise VaccineManagementException(ExceptionEnum.NOT_APPOINTMENT_WITH_DATE_SIGNATURE.value)
         freezer = freeze_time(
-            datetime.fromtimestamp(appointment_record["_VaccinationAppointment__issued_at"]))
+            datetime.fromtimestamp(appointment_record[AttributeEnum.VACC_APP_ISSUED.value]))
         freezer.start()
-        appointment = cls(appointment_record["_VaccinationAppointment__patient_sys_id"],
-                          appointment_record["_VaccinationAppointment__phone_number"], datetime.fromtimestamp(
-                appointment_record["_VaccinationAppointment__appointment_date"]).isoformat())
+        appointment = cls(appointment_record[AttributeEnum.VACC_APP_PAT_SYS_ID.value],
+                          appointment_record[AttributeEnum.VACC_APP_PHONE_NUMBER.value], datetime.fromtimestamp(
+                appointment_record[AttributeEnum.VACC_APP_DATE.value]).isoformat())
         freezer.stop()
         return appointment
 
@@ -138,7 +140,7 @@ class VaccinationAppointment:
         cls.is_cancellation(cancellation_parser)
         cancellation = VaccinationCancellationLog(*list(cancellation_parser.json_content.values()))
         if cancellation is None:
-            raise VaccineManagementException("cancellation is not found")
+            raise VaccineManagementException(ExceptionEnum.CANCELLATION_NOT_FOUND.value)
         return cancellation
 
     @classmethod
@@ -155,24 +157,24 @@ class VaccinationAppointment:
         if datetime.fromisoformat(iso_date) > datetime.now():
             return True
         if datetime.fromisoformat(iso_date) == datetime.now():
-            raise VaccineManagementException("The appointment can't be on the same day of the request")
-        raise VaccineManagementException("Appointment date is in the past")
+            raise VaccineManagementException(ExceptionEnum.NOT_APPOINTMENT_THE_SAME_DAY_REQUEST.value)
+        raise VaccineManagementException(ExceptionEnum.APPOINTMENT_EXPIRED.value)
 
     def is_valid_today(self):
         """returns true if today is the appointment's date"""
         today = datetime.today().date()
         date_patient = datetime.fromtimestamp(self.appointment_date).date()
         if date_patient != today:
-            raise VaccineManagementException("Today is not the date")
+            raise VaccineManagementException(ExceptionEnum.TODAY_NOT_DAY.value)
         return True
 
     @classmethod
     def is_cancelled(cls, date_signature):
         """checks if the appointment is cancelled"""
-        cancellation = CancellationsJsonStore().find_item(date_signature, "_VaccinationCancellationLog__date_signature")
+        cancellation = CancellationsJsonStore().find_item(date_signature, AttributeEnum.VACC_CANC_DATE_SIGNATURE.value)
         if cancellation is None:
             return False
-        return cancellation["_VaccinationCancellationLog__type"]
+        return cancellation[AttributeEnum.VACC_CANC_TYPE.value]
 
     def register_vaccination(self):
         """register the vaccine administration"""
@@ -181,11 +183,11 @@ class VaccinationAppointment:
             vaccination_log_entry = VaccinationLog(self.date_signature)
             vaccination_log_entry.save_log_entry()
         elif c_type == "Final":
-            raise VaccineManagementException("Appointment cancellation is FINAL")
+            raise VaccineManagementException(ExceptionEnum.APPOINTMENT_IS_FINAL.value)
         elif c_type == "Temporal":
-            raise VaccineManagementException("Appointment has been cancelled")
+            raise VaccineManagementException(ExceptionEnum.APPOINTMENT_IS_TEMPORAL.value)
         else:
-            raise VaccineManagementException("Unexpected behaviour")
+            raise VaccineManagementException(ExceptionEnum.VACC_CANC_TYPE_NOT_ACCEPT.value)
         return True
 
     @staticmethod
@@ -193,5 +195,5 @@ class VaccinationAppointment:
         """Check if the appointment is in the future, if it is not already cancelled, and then register the cancellation"""
         VaccinationAppointment.is_valid_future(datetime.fromtimestamp(appointment.appointment_date).isoformat())
         if VaccinationAppointment.is_cancelled(cancellation.date_signature):
-            raise VaccineManagementException("Appointment is already cancelled")
+            raise VaccineManagementException(ExceptionEnum.APPOINTMENT_ALREADY_CANCEL.value)
         CancellationsJsonStore().add_item(cancellation)
