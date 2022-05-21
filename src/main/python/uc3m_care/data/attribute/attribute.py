@@ -2,7 +2,6 @@
 import re
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
 
-
 # pylint: disable=too-few-public-methods
 class Attribute:
     """class representing attributes"""

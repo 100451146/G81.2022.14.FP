@@ -1,6 +1,8 @@
+"""Contains the Class for enumerations on patterns"""
 from enum import Enum
 
 class PatternEnum(Enum):
+    """Class for enumerations on patterns"""
     CANC_REASON = r"^.{2,100}$"
     CANC_TYPE = r"(Temporal|Final)"
     DATE_SIGNATURE = r"[0-9a-fA-F]{64}$"

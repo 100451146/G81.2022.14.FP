@@ -1,4 +1,5 @@
-"""Subclass of JsonStore for managing the Patients store"""
+"""Subclass of JsonStore for managing the Patients Cancellations store"""
+
 from uc3m_care.storage.json_store import JsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.enumerations.attribute_enum import AttributeEnum
@@ -48,4 +49,3 @@ class CancellationsJsonStore:
 
     def __setattr__(self, name, value):
         return setattr(self.instance, name, value)
-

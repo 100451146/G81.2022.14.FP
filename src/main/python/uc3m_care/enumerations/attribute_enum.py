@@ -1,6 +1,9 @@
+"""Contains the class for enumerations on attributes"""
 from enum import Enum
 
 class AttributeEnum(Enum):
+    """Class for enumerations on attributes"""
+
     # Vaccination Appointment
     VACC_APP_ISSUED = "_VaccinationAppointment__issued_at"
     VACC_APP_PAT_SYS_ID = "_VaccinationAppointment__patient_sys_id"

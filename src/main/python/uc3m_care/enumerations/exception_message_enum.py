@@ -1,6 +1,8 @@
+"""Contains the Class for enumerations on exceptions messages"""
 from enum import Enum
 
 class ExceptionEnum(Enum):
+    """Class for enumerations on exceptions messages"""
     # Invalid Object
     INVALID_APPOINTMENT_OBJECT = "Invalide appointment object"
     INVALID_VACC_LOG_OBJECT = "Invalid VaccinationLog object"
@@ -47,8 +49,3 @@ class ExceptionEnum(Enum):
     BAD_PATIENT_SYS_ID = "patient system id is not valid"
     BAD_PHONE_NUMBER = "phone number is not valid"
     BAD_REGISTRATION_TYPE = "Registration type is nor valid"
-
-
-
-
-
