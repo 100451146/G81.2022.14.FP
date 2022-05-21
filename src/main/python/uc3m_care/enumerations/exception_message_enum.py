@@ -34,6 +34,20 @@ class ExceptionEnum(Enum):
     BAD_LABEL_CANC_TYPE = "Bad label cancellation_type"
     BAD_LABEL_REASON = "Bad label reason"
 
+    # Attributes
+    AGE_NOT_VALID = "age is not valid"
+    BAD_CANC_REASON = "Reason for cancellation length is not between 2 and 100"
+    BAD_CANC_TYPE = "Cancellation type is not valid"
+    BAD_DATE_SIGNATURE = "date_signature format is not valid"
+    BAD_NAME = "name surname is not valid"
+    BAD_ISO_FORMAT = "Date is not ISO format"
+    BAD_TYPE_DATE = "Date is not a string"
+    BAD_UUID = "UUID invalid"
+    NOT_UUID = "Id received is not a UUID"
+    BAD_PATIENT_SYS_ID = "patient system id is not valid"
+    BAD_PHONE_NUMBER = "phone number is not valid"
+    BAD_REGISTRATION_TYPE = "Registration type is nor valid"
+
 
 
 
