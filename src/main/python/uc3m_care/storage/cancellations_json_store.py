@@ -4,6 +4,7 @@ from uc3m_care.storage.json_store import JsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
 from uc3m_care.enumerations.attribute_enum import AttributeEnum
 
+
 class CancellationsJsonStore:
     """Implements the singleton pattern"""
 

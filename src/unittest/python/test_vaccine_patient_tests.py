@@ -126,3 +126,16 @@ class TestVaccinePatient(TestCase):
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
         self.assertEqual(context_manager.exception.message, ExceptionEnum.NOT_APPOINTMENT_WITH_DATE_SIGNATURE.value)
+
+    @freeze_time("2022-03-18")
+    def test_vaccine_patient_already_vaccinated(self):
+        """Vaccinate patient, and then try to vaccinate again"""
+        VaccinationJsonStore().empty_json_file()
+        value = VaccineManager().vaccine_patient \
+            ("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+        self.assertTrue(value)
+        vaccination_entry = VaccinationJsonStore().find_item("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+        self.assertIsNotNone(vaccination_entry)
+        with self.assertRaises(VaccineManagementException) as context_manager:
+            VaccineManager().vaccine_patient("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
+        self.assertEqual(context_manager.exception.message, "Patient is already vaccinated")
