@@ -6,4 +6,4 @@ from uc3m_care.data.attribute.attribute import Attribute
 class CancellationType(Attribute):
     """Class's for the attribute PhoneNumber"""
     _validation_pattern = r"(Temporal|Final)"
-    _validation_error_message = "Cancellation type is nor valid"
+    _validation_error_message = "Cancellation type is not valid"

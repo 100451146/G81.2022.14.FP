@@ -204,7 +204,7 @@ class TestGetVaccineDate(TestCase):
         try:
             my_manager.get_vaccine_date(file_test, "1969-12-31")
         except VaccineManagementException as exception_raised:
-            self.assertEqual(exception_raised.message, "Date is in the past")
+            self.assertEqual(exception_raised.message, "Appointment date is in the past")
 
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_is_today(self):
@@ -226,7 +226,7 @@ class TestGetVaccineDate(TestCase):
         try:
             my_manager.get_vaccine_date(file_test, "2022-03-08")
         except VaccineManagementException as exception_raised:
-            self.assertEqual(exception_raised.message, "The appointment date can't be on the same day of the request")
+            self.assertEqual(exception_raised.message, "The appointment can't be on the same day of the request")
 
     def test_get_vaccine_date_date_is_str(self):
         """check if date is a string"""

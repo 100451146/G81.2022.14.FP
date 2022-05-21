@@ -5,11 +5,9 @@ import shutil
 import unittest
 from freezegun import freeze_time
 
-from uc3m_care import VaccineManager, AppointmentsJsonStore
+from uc3m_care import VaccineManager, VaccinationAppointment, PatientsJsonStore, AppointmentsJsonStore, CancellationsJsonStore
 from uc3m_care import VaccineManagementException
-from uc3m_care import PatientsJsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_RF4_PATH, JSON_FILES_PATH, JSON_FILES_RF2_PATH
-from uc3m_care.storage.cancellations_json_store import CancellationsJsonStore
 
 DATE_ISO = "2022-03-18"
 
@@ -52,16 +50,18 @@ class CancelAppointment(unittest.TestCase):
         file_store_cancellations.delete_json_file()
 
     @freeze_time("2022-03-08")
-    def test_cancel_appointment_cancellation(self):
-        """Try to cancel an appointment that exists"""
+    def test_cancel_appointment_cancellation_ok(self):
+        """Try to cancel an appointment that exists and everything is nominal"""
         cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
         shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
                     cancellation_store)
-        file_test = JSON_FILES_RF4_PATH + "test_ok.json"
+        file_test = JSON_FILES_RF4_PATH + "test_ok_second.json"
         VaccineManager().cancel_appointment(file_test)
-    # check if it is added to cancellation store
+        # check if it is added to the cancellation store
+        cancellation_type = VaccinationAppointment.is_cancelled("6a8403d8605804cf2534fd7885940f3c3d8ec60ba578bc158b5dc2b9fb68d524")
+        self.assertIsNotNone(cancellation_type)
 
-    def test_cancel_appointment_cancellation_input_not_found(self):
+    def test_cancel_appointment_cancellation_input_file_not_found(self):
         """Try to cancel an appointment that exists"""
         cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
         shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
@@ -72,23 +72,67 @@ class CancelAppointment(unittest.TestCase):
         self.assertEqual(context.exception.message, "File is not found")
 
     def test_cancel_appointment_date_signature_not_appointed(self):
-        pass
+        cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
+        shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
+                    cancellation_store)
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_appointed.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, "There is not an appointment with this date_signature")
 
-    def test_cancel_appointment_reason_not_valid(self):
-        pass
+    def test_cancel_appointment_reason_not_valid_long(self):
+        cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
+        shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
+                    cancellation_store)
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_reason_long.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, "Reason for cancellation length is not between 2 and 100")
 
-    def test_cancel_appointment_type_not_valid(self):
-        pass
+    def test_cancel_appointment_reason_not_valid_short(self):
+        cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
+        shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
+                    cancellation_store)
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_reason_short.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, "Reason for cancellation length is not between 2 and 100")
 
-    def test_cancel_appointment_not_appointed(self):
-        pass
+    def test_cancel_appointment_type_not_string(self):
+        cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
+        shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
+                    cancellation_store)
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_type_not_string.json"
+        with self.assertRaises(TypeError) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.__str__(), "expected string or bytes-like object")
+
+    def test_cancel_appointment_type_not_accepted(self):
+        cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
+        shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
+                    cancellation_store)
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_type.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, "Cancellation type is not valid")
 
     def test_cancel_appointment_past_appointment_date(self):
-        pass
+        """Try to cancel an appointment that is already expired (same as first test but without freeze time"""
+        cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
+        shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
+                    cancellation_store)
+        file_test = JSON_FILES_RF4_PATH + "test_ok_second.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, "Appointment date is in the past")
+        # check if it is added to the cancellation store
+        cancellation_type = VaccinationAppointment.is_cancelled(
+            "6a8403d8605804cf2534fd7885940f3c3d8ec60ba578bc158b5dc2b9fb68d524")
+        self.assertIsNotNone(cancellation_type)
 
     @freeze_time("2022-03-18")
     def test_vaccine_cancelled_temporal(self):
-        """Try to vaccinate but the appointment is cancelled with type Final"""
+        """Try to vaccinate but the appointment is cancelled with type temporal"""
         cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
         shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json",
                     cancellation_store)
@@ -101,15 +145,14 @@ class CancelAppointment(unittest.TestCase):
     def test_vaccine_cancelled_Final(self):
         """Try to vaccinate but the appointment is cancelled with type Final"""
         cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
-
         shutil.copy(JSON_FILES_RF4_PATH + "store_cancellation.json", cancellation_store)
         with open(cancellation_store, "r", encoding="utf-8", newline="") as file_cancellations:
-            cancellation_list = json.load(file_cancellations)
-        for cancellation in cancellation_list:
-            if cancellation["_VaccinationCancellation__date_signature"] == "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c":
-                cancellation["_VaccinationCancellation__cancellation_type"] = "Final"
+            cancels_list = json.load(file_cancellations)
+        for cancellation in cancels_list:
+            if cancellation["_VaccinationCancellationLog__date_signature"] == "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c":
+                cancellation["_VaccinationCancellationLog__type"] = "Final"
         with open(cancellation_store, "w", encoding="utf-8", newline="") as file_cancellations:
-            json.dump(cancellation_list, file_cancellations)
+            json.dump(cancels_list, file_cancellations)
 
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().vaccine_patient("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")

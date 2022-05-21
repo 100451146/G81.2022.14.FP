@@ -97,7 +97,7 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "7a8403d8605804cf2534fd7885940f3c3d8ec60ba578bc158b5dc2b9fb68d524")
-        self.assertEqual(context_manager.exception.message, "date_signature is not found")
+        self.assertEqual(context_manager.exception.message, "There is not an appointment with this date_signature")
         # read the file again to compare
         hash_new = file_store_vaccine.data_hash()
         self.assertEqual(hash_new, hash_original)
@@ -124,4 +124,4 @@ class TestVaccinePatient(TestCase):
         with self.assertRaises(VaccineManagementException) as context_manager:
             my_manager.vaccine_patient(
                 "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context_manager.exception.message, "date_signature is not found")
+        self.assertEqual(context_manager.exception.message, "There is not an appointment with this date_signature")
