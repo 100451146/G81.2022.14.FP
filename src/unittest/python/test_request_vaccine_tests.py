@@ -5,6 +5,8 @@ from freezegun import freeze_time
 from uc3m_care import VaccineManager
 from uc3m_care import VaccineManagementException
 from uc3m_care import PatientsJsonStore
+from uc3m_care.enumerations.attribute_enum import AttributeEnum
+from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
 
 # """
 #      import uuid
@@ -39,61 +41,61 @@ param_list_ok = [("78924cb0-075a-4099-a3ee-f3b562e805b9", "minombre tienelalongi
 param_list_nok = [("bb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                    "minombre tienelalongitudmaxima", "Regular",
                    "+34123456789",
-                   "6", "UUID invalid", "test_5 , is not uuid v4"),
+                   "6", ExceptionEnum.BAD_UUID.value, "test_5 , is not uuid v4"),
                   ("zb0506db-50de-493b-abf9-1fb44816b628",
                    "minombre tieneuncharmenosqmax", "Family",
-                   "+34333456789", "7", "Id received is not a UUID",
+                   "+34333456789", "7", ExceptionEnum.NOT_UUID.value,
                    "test_6, is not hex uuid"),
                   ("2b0506db-50de-493b-abf9-1fb44816b62",
                    "minombre tiene dosblancos", "Regular",
-                   "+34333456789", "125", "Id received is not a UUID",
+                   "+34333456789", "125", ExceptionEnum.NOT_UUID.value,
                    "test_7, patiend id 34 long"),
                   ("2b0506db-50de-493b-abf9-1fb44816b6289", "m m", "Regular",
-                   "+34333456789", "124", "Id received is not a UUID",
+                   "+34333456789", "124", ExceptionEnum.NOT_UUID.value,
                    "test_8 , patiend id 36 long"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombre tienelalongitudmaxima",
-                   "Regularcito", "+34123456789", "6", "Registration type is nor valid",
+                   "Regularcito", "+34123456789", "6", ExceptionEnum.BAD_REGISTRATION_TYPE.value,
                    "test_9 registration type not valid"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombre tieneun01", "Family",
-                   "+34333456789", "7", "name surname is not valid",
+                   "+34333456789", "7", ExceptionEnum.BAD_NAME.value,
                    "test_10 name no char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombre tienelalongitudmaximay", "Regular",
-                   "+34333456789", "125", "name surname is not valid",
+                   "+34333456789", "125", ExceptionEnum.BAD_NAME.value,
                    "test_11, long 31 de name"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "minombrenotieneblancoentrecha", "Regular",
-                   "+34333456789", "124", "name surname is not valid",
+                   "+34333456789", "124", ExceptionEnum.BAD_NAME.value,
                    "test_12, long 29 y 0 blanco"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "", "Regular",
-                   "+34333456789", "124", "name surname is not valid",
+                   "+34333456789", "124", ExceptionEnum.BAD_NAME.value,
                    "test_13, 0 char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+3433345678a", "124", "phone number is not valid",
+                   "+3433345678a", "124", ExceptionEnum.BAD_PHONE_NUMBER.value,
                    "test_14, phone con char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+343334567892", "124", "phone number is not valid",
+                   "+343334567892", "124", ExceptionEnum.BAD_PHONE_NUMBER.value,
                    "test_15, phone 12 char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+3433345678", "124", "phone number is not valid",
+                   "+3433345678", "124", ExceptionEnum.BAD_PHONE_NUMBER.value,
                    "test_16, phone 10 char"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+34333456789", "12a", "age is not valid",
+                   "+34333456789", "12a", ExceptionEnum.AGE_NOT_VALID.value,
                    "test_17, age no digit"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+34333456789", "5", "age is not valid",
+                   "+34333456789", "5", ExceptionEnum.AGE_NOT_VALID.value,
                    "test_18, age is 5"),
                   ("6071d52e-ab42-452d-837c-0639367db79f",
                    "Pedro Perez", "Regular",
-                   "+34333456789", "126", "age is not valid",
+                   "+34333456789", "126", ExceptionEnum.AGE_NOT_VALID.value,
                    "test_19, age is 126")
                   ]
 
@@ -132,7 +134,7 @@ class TestRequestVacID(unittest.TestCase):
                         (patient_id, name_surname, registration_type, phone_number, age)
                 self.assertEqual(context_manager.exception.message, expected_result)
                 self.assertIsNone \
-                    (file_store.find_item(patient_id, "_VaccinePatientRegister__patient_id"))
+                    (file_store.find_item(patient_id, AttributeEnum.VACC_PAT_REG_PAT_ID.value))
 
     def test__duplicate_valid_request_vaccination(self):
         """ Test 20 , patient id is registered in store"""
@@ -146,7 +148,7 @@ class TestRequestVacID(unittest.TestCase):
             value = my_request.request_vaccination_id("a729d963-e0dd-47d0-8bc6-b6c595ad0098",
                                                       "Pedro Perez", "Regular", "+34333456789", "124")
         self.assertEqual(context_manager.exception.message,
-                         "patien_id is registered in store_patient")
+                         ExceptionEnum.PATIENT_ALREADY_REGISTERED.value)
 
         self.assertIsNotNone(file_store.find_item(value))
 
@@ -162,7 +164,7 @@ class TestRequestVacID(unittest.TestCase):
                                                   "Pedro Perez", "Family", "+34333456789", "124")
         self.assertEqual(value, "f498f09220649fce1e2e8e523d16d212")
         patients_found = file_store.find_items_list("a729d963-e0dd-47d0-8bc6-b6c595ad0098",
-                                                    "_VaccinePatientRegister__patient_id")
+                                                    AttributeEnum.VACC_PAT_REG_PAT_ID.value)
         self.assertEqual(len(patients_found), 2)
 
     @freeze_time("2022-03-08")
@@ -186,7 +188,7 @@ class TestRequestVacID(unittest.TestCase):
             my_request.request_vaccination_id("bb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                                               "Pedro Hernandez", "Regular",
                                               "+34123456789", "22")
-        self.assertEqual("UUID invalid", context_manager.exception.message)
+        self.assertEqual(ExceptionEnum.BAD_UUID.value, context_manager.exception.message)
 
     def test_request_vaccination_id_nok_uuid_2(self):
         """UUID is not hexadecimal"""
@@ -195,7 +197,7 @@ class TestRequestVacID(unittest.TestCase):
             my_request.request_vaccination_id("zb5dbd6f-d8b4-113f-8eb9-dd262cfc54e0",
                                               "Pedro Hernandez", "Regular",
                                               "+34123456789", "22")
-        self.assertEqual("Id received is not a UUID", context_manager.exception.message)
+        self.assertEqual(ExceptionEnum.NOT_UUID.value, context_manager.exception.message)
 
     def test_request_registration_type_nok(self):
         """registration type is not ok"""
@@ -209,7 +211,7 @@ class TestRequestVacID(unittest.TestCase):
                                               "+34123456789", "22")
         hash_new = file_store.data_hash()
 
-        self.assertEqual("Registration type is nor valid", context_manager.exception.message)
+        self.assertEqual(ExceptionEnum.BAD_REGISTRATION_TYPE.value, context_manager.exception.message)
         self.assertEqual(hash_new, hash_original)
 
 

@@ -8,6 +8,8 @@ from freezegun import freeze_time
 from uc3m_care import VaccineManager, VaccinationAppointment, PatientsJsonStore, AppointmentsJsonStore, CancellationsJsonStore
 from uc3m_care import VaccineManagementException
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_RF4_PATH, JSON_FILES_PATH, JSON_FILES_RF2_PATH
+from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
+from uc3m_care.enumerations.attribute_enum import AttributeEnum
 
 
 class CancelAppointment(unittest.TestCase):
@@ -67,7 +69,7 @@ class CancelAppointment(unittest.TestCase):
         file_test = JSON_FILES_RF4_PATH + "test_ok.json" + "random"
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().cancel_appointment(file_test)
-        self.assertEqual(context.exception.message, "File is not found")
+        self.assertEqual(context.exception.message, ExceptionEnum.FILE_NOT_FOUND.value)
 
     def test_cancel_appointment_date_signature_not_appointed(self):
         """Test to cancel an appointment that has not been appointed"""
@@ -77,7 +79,7 @@ class CancelAppointment(unittest.TestCase):
         file_test = JSON_FILES_RF4_PATH + "test_tnot_appointed.json"
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().cancel_appointment(file_test)
-        self.assertEqual(context.exception.message, "There is not an appointment with this date_signature")
+        self.assertEqual(context.exception.message, ExceptionEnum.NOT_APPOINTMENT_WITH_DATE_SIGNATURE.value)
 
     def test_cancel_appointment_reason_not_valid_long(self):
         """Try to cancel an appointment but the reason is too long"""
@@ -87,7 +89,7 @@ class CancelAppointment(unittest.TestCase):
         file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_reason_long.json"
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().cancel_appointment(file_test)
-        self.assertEqual(context.exception.message, "Reason for cancellation length is not between 2 and 100")
+        self.assertEqual(context.exception.message, ExceptionEnum.BAD_CANC_REASON.value)
 
     def test_cancel_appointment_reason_not_valid_short(self):
         """Try to cancel an appointment but the reason is too short"""
@@ -97,7 +99,7 @@ class CancelAppointment(unittest.TestCase):
         file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_reason_short.json"
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().cancel_appointment(file_test)
-        self.assertEqual(context.exception.message, "Reason for cancellation length is not between 2 and 100")
+        self.assertEqual(context.exception.message, ExceptionEnum.BAD_CANC_REASON.value)
 
     def test_cancel_appointment_type_not_string(self):
         """Test to cancel an appointment but the types is not str"""
@@ -117,7 +119,7 @@ class CancelAppointment(unittest.TestCase):
         file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_type.json"
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().cancel_appointment(file_test)
-        self.assertEqual(context.exception.message, "Cancellation type is not valid")
+        self.assertEqual(context.exception.message, ExceptionEnum.BAD_CANC_TYPE.value)
 
     def test_cancel_appointment_past_appointment_date(self):
         """Try to cancel an appointment that is already expired (same as first test but without freeze time"""
@@ -127,7 +129,7 @@ class CancelAppointment(unittest.TestCase):
         file_test = JSON_FILES_RF4_PATH + "test_ok_second.json"
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().cancel_appointment(file_test)
-        self.assertEqual(context.exception.message, "Appointment date is in the past")
+        self.assertEqual(context.exception.message, ExceptionEnum.APPOINTMENT_EXPIRED.value)
         # check if it is added to the cancellation store
         cancellation_type = VaccinationAppointment.is_cancelled(
             "6a8403d8605804cf2534fd7885940f3c3d8ec60ba578bc158b5dc2b9fb68d524")
@@ -142,7 +144,7 @@ class CancelAppointment(unittest.TestCase):
 
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().vaccine_patient("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context.exception.message, "Appointment has been cancelled")
+        self.assertEqual(context.exception.message, ExceptionEnum.APPOINTMENT_IS_TEMPORAL.value)
 
     @freeze_time("2022-03-18")
     def test_vaccine_cancelled_final(self):
@@ -152,11 +154,11 @@ class CancelAppointment(unittest.TestCase):
         with open(cancellation_store, "r", encoding="utf-8", newline="") as file_cancellations:
             cancels_list = json.load(file_cancellations)
         for cancellation in cancels_list:
-            if cancellation["_VaccinationCancellationLog__date_signature"] == "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c":
-                cancellation["_VaccinationCancellationLog__type"] = "Final"
+            if cancellation[AttributeEnum.VACC_CANC_LOG_DATE_SIGNATURE.value] == "5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c":
+                cancellation[AttributeEnum.VACC_CANC_LOG_TYPE.value] = "Final"
         with open(cancellation_store, "w", encoding="utf-8", newline="") as file_cancellations:
             json.dump(cancels_list, file_cancellations)
 
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().vaccine_patient("5a06c7bede3d584e934e2f5bd3861e625cb31937f9f1a5362a51fbbf38486f1c")
-        self.assertEqual(context.exception.message, "Appointment cancellation is FINAL")
+        self.assertEqual(context.exception.message, ExceptionEnum.APPOINTMENT_IS_FINAL.value)

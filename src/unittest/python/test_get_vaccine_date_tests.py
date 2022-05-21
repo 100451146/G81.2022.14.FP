@@ -8,39 +8,40 @@ from uc3m_care import VaccineManagementException
 from uc3m_care import JSON_FILES_PATH, JSON_FILES_RF2_PATH
 from uc3m_care import AppointmentsJsonStore
 from uc3m_care import PatientsJsonStore
+from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
 
 DATE_ISO = "2022-03-18"
 
-param_list_nok = [("test_dup_all.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_char_plus.json", "phone number is not valid"),
-                  ("test_dup_colon.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_comillas.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_comma.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_content.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data1.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data1_content.json", "patient system id is not valid"),
-                  ("test_dup_data2.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_data2_content.json", "phone number is not valid"),
-                  ("test_dup_field1.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_field2.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_final_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_initial_bracket.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label1.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label1_content.json", "Bad label patient_id"),
-                  ("test_dup_label2.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_dup_label2_content.json", "Bad label contact phone"),
-                  ("test_dup_phone.json", "phone number is not valid"),
-                  ("test_empty.json", "Bad label patient_id"),
-                  ("test_mod_char_plus.json", "phone number is not valid"),
-                  ("test_mod_data1.json", "patient system id is not valid"),
-                  ("test_mod_data2.json", "phone number is not valid"),
-                  ("test_mod_label1.json", "Bad label patient_id"),
-                  ("test_mod_label2.json", "Bad label contact phone"),
-                  ("test_mod_phone.json", "phone number is not valid"),
-                  ("test_no_char_plus.json", "phone number is not valid"),
-                  ("test_no_colon.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_no_comillas.json", "JSON Decode Error - Wrong JSON Format"),
-                  ("test_no_phone.json", "phone number is not valid")
+param_list_nok = [("test_dup_all.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_char_plus.json", ExceptionEnum.BAD_PHONE_NUMBER.value),
+                  ("test_dup_colon.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_comillas.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_comma.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_content.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_data1.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_data1_content.json", ExceptionEnum.BAD_PATIENT_SYS_ID.value),
+                  ("test_dup_data2.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_data2_content.json", ExceptionEnum.BAD_PHONE_NUMBER.value),
+                  ("test_dup_field1.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_field2.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_final_bracket.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_initial_bracket.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_label1.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_label1_content.json", ExceptionEnum.BAD_LABEL_PATIENT_ID.value),
+                  ("test_dup_label2.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_dup_label2_content.json", ExceptionEnum.BAD_LABEL_PHONE.value),
+                  ("test_dup_phone.json", ExceptionEnum.BAD_PHONE_NUMBER.value),
+                  ("test_empty.json", ExceptionEnum.BAD_LABEL_PATIENT_ID.value),
+                  ("test_mod_char_plus.json", ExceptionEnum.BAD_PHONE_NUMBER.value),
+                  ("test_mod_data1.json", ExceptionEnum.BAD_PATIENT_SYS_ID.value),
+                  ("test_mod_data2.json", ExceptionEnum.BAD_PHONE_NUMBER.value),
+                  ("test_mod_label1.json", ExceptionEnum.BAD_LABEL_PATIENT_ID.value),
+                  ("test_mod_label2.json", ExceptionEnum.BAD_LABEL_PHONE.value),
+                  ("test_mod_phone.json", ExceptionEnum.BAD_PHONE_NUMBER.value),
+                  ("test_no_char_plus.json", ExceptionEnum.BAD_PHONE_NUMBER.value),
+                  ("test_no_colon.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_no_comillas.json", ExceptionEnum.WRONG_JSON_FORMAT.value),
+                  ("test_no_phone.json", ExceptionEnum.BAD_PHONE_NUMBER.value)
                   ]
 
 
@@ -110,7 +111,7 @@ class TestGetVaccineDate(TestCase):
         # check the method
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_test, DATE_ISO)
-        self.assertEqual(c_m.exception.message, "patient system id is not valid")
+        self.assertEqual(c_m.exception.message, ExceptionEnum.BAD_PATIENT_SYS_ID.value)
 
         # read the file again to compare
         hash_new = file_store_date.data_hash()
@@ -130,7 +131,7 @@ class TestGetVaccineDate(TestCase):
         # check the method
         with self.assertRaises(VaccineManagementException) as c_m:
             my_manager.get_vaccine_date(file_test, DATE_ISO)
-        self.assertEqual(c_m.exception.message, "JSON Decode Error - Wrong JSON Format")
+        self.assertEqual(c_m.exception.message, ExceptionEnum.WRONG_JSON_FORMAT.value)
 
         # read the file again to compare
         hash_new = file_store_date.data_hash()
@@ -181,7 +182,7 @@ class TestGetVaccineDate(TestCase):
         # read the file again to compare
         hash_new = file_store_date.data_hash()
 
-        self.assertEqual(exception_message, "Patient's data have been manipulated")
+        self.assertEqual(exception_message, ExceptionEnum.PAT_DATA_MANIPULATED.value)
         self.assertEqual(hash_new, hash_original)
 
     @freeze_time("2022-03-08")
@@ -204,7 +205,7 @@ class TestGetVaccineDate(TestCase):
         try:
             my_manager.get_vaccine_date(file_test, "1969-12-31")
         except VaccineManagementException as exception_raised:
-            self.assertEqual(exception_raised.message, "Appointment date is in the past")
+            self.assertEqual(exception_raised.message, ExceptionEnum.APPOINTMENT_EXPIRED.value)
 
     @freeze_time("2022-03-08")
     def test_get_vaccine_date_is_today(self):
@@ -226,7 +227,7 @@ class TestGetVaccineDate(TestCase):
         try:
             my_manager.get_vaccine_date(file_test, "2022-03-08")
         except VaccineManagementException as exception_raised:
-            self.assertEqual(exception_raised.message, "The appointment can't be on the same day of the request")
+            self.assertEqual(exception_raised.message, ExceptionEnum.NOT_APPOINTMENT_THE_SAME_DAY_REQUEST.value)
 
     def test_get_vaccine_date_date_is_str(self):
         """check if date is a string"""
@@ -235,7 +236,7 @@ class TestGetVaccineDate(TestCase):
         try:
             my_manager.get_vaccine_date(file_test, int(3))
         except VaccineManagementException as exception_raised:
-            self.assertEqual(exception_raised.message, "Date is not a string")
+            self.assertEqual(exception_raised.message, ExceptionEnum.BAD_TYPE_DATE.value)
 
     def test_get_vaccine_date_date_is_not_iso(self):
         """check if date has iso format"""
@@ -244,4 +245,4 @@ class TestGetVaccineDate(TestCase):
         try:
             my_manager.get_vaccine_date(file_test, "10")
         except VaccineManagementException as exception_raised:
-            self.assertEqual(exception_raised.message, "Date is not ISO format")
+            self.assertEqual(exception_raised.message, ExceptionEnum.BAD_ISO_FORMAT.value)
