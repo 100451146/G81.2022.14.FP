@@ -12,6 +12,7 @@ class ExceptionEnum(Enum):
     APPOINTMENT_ALREADY_CANCEL = "Appointment is already cancelled"
     PAT_SYS_ID_NOT_FOUND = "patient_system_id not found"
     PAT_DATA_MANIPULATED = "Patient's data have been manipulated"
+    INVALID_APPOINTMENT_OBJECT = "Invalide appointment object"
 
     BAD_LABEL_PHONE = "Bad label contact phone"
     BAD_LABEL_PATIENT_ID = "Bad label patient_id"
@@ -21,3 +22,8 @@ class ExceptionEnum(Enum):
 
     FILE_NOT_FOUND = "File is not found"
     WRONG_JSON_FORMAT = "JSON Decode Error - Wrong JSON Format"
+    WRONG_FILE = "Wrong file or file path"
+
+    INVALID_PATIENT_OBJECT = "Invalid patient object"
+    PATIENT_ALREADY_REGISTERED = "patien_id is registered in store_patient"
+    INVALID_VACC_LOG_OBJECT = "Invalid VaccinationLog object"

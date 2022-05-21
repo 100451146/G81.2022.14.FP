@@ -4,7 +4,7 @@ import json
 import os
 
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-
+from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
 
 class JsonStore:
     """Superclass for managing storage in JSON files"""
@@ -24,7 +24,7 @@ class JsonStore:
             # file is not found , so  init my data_list
             self._data_list = []
         except json.JSONDecodeError as exception_raised:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") \
+            raise VaccineManagementException(ExceptionEnum.WRONG_JSON_FORMAT.value) \
                 from exception_raised
 
     def save(self):
@@ -33,7 +33,7 @@ class JsonStore:
             with open(self._FILE_PATH, "w", encoding="utf-8", newline="") as file:
                 json.dump(self._data_list, file, indent=2)
         except FileNotFoundError as ex:
-            raise VaccineManagementException("Wrong file or file path") from ex
+            raise VaccineManagementException(ExceptionEnum.WRONG_FILE.value) from ex
 
     def add_item(self, item):
         """Adds a new item to the data-list and updates the JSON file"""

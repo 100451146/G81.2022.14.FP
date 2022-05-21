@@ -1,7 +1,7 @@
 """Subclass of JsonStore for managing the Patients store"""
 from uc3m_care.storage.json_store import JsonStore
 from uc3m_care.cfg.vaccine_manager_config import JSON_FILES_PATH
-
+from uc3m_care.enumerations.attribute_enum import AttributeEnum
 
 class CancellationsJsonStore:
     """Implements the singleton pattern"""
@@ -10,7 +10,7 @@ class CancellationsJsonStore:
     class __CancellationsJsonStore(JsonStore):
         """Subclass of JsonStore for managing the VaccinationLog"""
         _FILE_PATH = JSON_FILES_PATH + "store_cancellation.json"
-        ID_FIELD = "_VaccinationCancellationLog__date_signature"
+        ID_FIELD = AttributeEnum.VACC_CANC_LOG_DATE_SIGNATURE.value
 
         # def add_item(self, item):
         #     """Overrides the add_item to verify the item to be stored"""
