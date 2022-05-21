@@ -171,10 +171,10 @@ class VaccinationAppointment:
     @classmethod
     def is_cancelled(cls, date_signature):
         """checks if the appointment is cancelled"""
-        cancellation = CancellationsJsonStore().find_item(date_signature, AttributeEnum.VACC_CANC_DATE_SIGNATURE.value)
+        cancellation = CancellationsJsonStore().find_item(date_signature, AttributeEnum.VACC_CANC_LOG_DATE_SIGNATURE.value)
         if cancellation is None:
             return False
-        return cancellation[AttributeEnum.VACC_CANC_TYPE.value]
+        return cancellation[AttributeEnum.VACC_CANC_LOG_TYPE.value]
 
     def register_vaccination(self):
         """register the vaccine administration"""

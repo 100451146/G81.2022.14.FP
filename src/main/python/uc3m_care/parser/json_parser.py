@@ -1,7 +1,7 @@
 """Superclass for parsing input json files"""
 import json
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
-
+from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
 
 class JsonParser:
     """Subclass of JsonStore for managing the Appointments"""
@@ -27,9 +27,9 @@ class JsonParser:
                 data = json.load(file)
         except FileNotFoundError as ex:
             # file is not found
-            raise VaccineManagementException("File is not found") from ex
+            raise VaccineManagementException(ExceptionEnum.FILE_NOT_FOUND.value) from ex
         except json.JSONDecodeError as ex:
-            raise VaccineManagementException("JSON Decode Error - Wrong JSON Format") from ex
+            raise VaccineManagementException(ExceptionEnum.WRONG_JSON_FORMAT.value) from ex
         self._json_content = data
 
     @property
