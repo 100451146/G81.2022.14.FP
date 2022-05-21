@@ -18,7 +18,7 @@ from uc3m_care.parser.cancellation_json_parser import CancellationJsonParser
 from uc3m_care.storage.appointments_json_store import AppointmentsJsonStore
 from uc3m_care.storage.cancellations_json_store import CancellationsJsonStore
 from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
-from uc3m_care.enumerations.attrubute_enum import AttributeEnum
+from uc3m_care.enumerations.attribute_enum import AttributeEnum
 
 # pylint: disable=too-many-instance-attributes
 class VaccinationAppointment:

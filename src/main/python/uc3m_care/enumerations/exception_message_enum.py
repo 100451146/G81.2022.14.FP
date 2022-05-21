@@ -10,3 +10,5 @@ class ExceptionEnum(Enum):
     APPOINTMENT_IS_TEMPORAL = "Appointment has been cancelled"
     VACC_CANC_TYPE_NOT_ACCEPT = "Unexpected behaviour"
     APPOINTMENT_ALREADY_CANCEL = "Appointment is already cancelled"
+    PAT_SYS_ID_NOT_FOUND = "patient_system_id not found"
+    PAT_DATA_MANIPULATED = "Patient's data have been manipulated"

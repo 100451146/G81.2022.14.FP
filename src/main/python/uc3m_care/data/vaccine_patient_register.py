@@ -13,6 +13,8 @@ from uc3m_care.data.attribute.attribute_full_name import FullName
 from uc3m_care.data.attribute.attribute_age import Age
 # pylint: disable: cyclic-import
 from uc3m_care.storage.patients_json_store import PatientsJsonStore
+from uc3m_care.enumerations.attribute_enum import AttributeEnum
+from uc3m_care.enumerations.exception_message_enum import ExceptionEnum
 
 
 class VaccinePatientRegister:
@@ -37,20 +39,20 @@ class VaccinePatientRegister:
 
         patient_found = patient_store.find_item(patient_system_id)
         if patient_found is None:
-            raise VaccineManagementException("patient_system_id not found")
+            raise VaccineManagementException(ExceptionEnum.PAT_SYS_ID_NOT_FOUND.value)
 
         # set the date when the patient was registered for checking the md5
         freezer = freeze_time(
-            datetime.fromtimestamp(patient_found["_VaccinePatientRegister__time_stamp"]).date())
+            datetime.fromtimestamp(patient_found[AttributeEnum.VACC_PAT_REG_TIME_STAMP.value]).date())
         freezer.start()
-        patient = cls(patient_found["_VaccinePatientRegister__patient_id"],
-                      patient_found["_VaccinePatientRegister__full_name"],
-                      patient_found["_VaccinePatientRegister__registration_type"],
-                      patient_found["_VaccinePatientRegister__phone_number"],
-                      patient_found["_VaccinePatientRegister__age"])
+        patient = cls(patient_found[AttributeEnum.VACC_PAT_REG_PAT_ID.value],
+                      patient_found[AttributeEnum.VACC_PAT_REG_NAME.value],
+                      patient_found[AttributeEnum.VACC_PAT_REG_REGISTRATION_TYPE.value],
+                      patient_found[AttributeEnum.VACC_PAT_REG_PHONE.value],
+                      patient_found[AttributeEnum.VACC_PAT_REG_AGE.value])
         freezer.stop()
         if patient.patient_system_id != patient_system_id:
-            raise VaccineManagementException("Patient's data have been manipulated")
+            raise VaccineManagementException(ExceptionEnum.PAT_DATA_MANIPULATED.value)
 
         return patient
 
