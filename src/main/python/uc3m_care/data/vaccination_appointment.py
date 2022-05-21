@@ -9,6 +9,7 @@ from uc3m_care.data.attribute.attribute_iso_date import ISOFormat
 from uc3m_care.data.attribute.attribute_phone_number import PhoneNumber
 from uc3m_care.data.attribute.attribute_patient_system_id import PatientSystemId
 from uc3m_care.data.attribute.attribute_date_signature import DateSignature
+from uc3m_care.data.vaccination_cancellation_log import VaccinationCancellationLog
 from uc3m_care.data.vaccination_log import VaccinationLog
 from uc3m_care.data.vaccine_patient_register import VaccinePatientRegister
 from uc3m_care.exception.vaccine_management_exception import VaccineManagementException
@@ -125,12 +126,12 @@ class VaccinationAppointment:
     def get_cancellation_from_json_file(cls, json_file):
         cancellation_parser = CancellationJsonParser(json_file)
         cls.is_cancelable(cancellation_parser)
-        cancellation = CancellationsJsonStore().find_item(
-            cancellation_parser.json_content[cancellation_parser.DATE_SIGNATURE], "_VaccinationCancellation__date_signature")
+        cancellation = VaccinationCancellationLog(*[i for i in cancellation_parser.json_content.values()])
         if cancellation is None:
             raise VaccineManagementException("cancellation is not found")
-        if cancellation["_VaccinationCancellation__cancellation_type"] == "Final":
+        if cancellation.type == "Final":
             raise VaccineManagementException("Appointment cancellation is FINAL")
+        return cancellation
 
     @classmethod
     def is_cancelable(cls, cancellation_parser):

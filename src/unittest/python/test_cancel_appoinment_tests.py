@@ -51,6 +51,7 @@ class CancelAppointment(unittest.TestCase):
         file_store_cancellations = CancellationsJsonStore()
         file_store_cancellations.delete_json_file()
 
+    @freeze_time("2022-03-08")
     def test_cancel_appointment_cancellation(self):
         """Try to cancel an appointment that exists"""
         cancellation_store = JSON_FILES_PATH + "store_cancellation.json"
