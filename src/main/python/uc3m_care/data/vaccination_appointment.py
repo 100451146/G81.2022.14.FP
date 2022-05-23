@@ -37,13 +37,6 @@ class VaccinationAppointment:
         justnow = datetime.utcnow()
         self.__issued_at = datetime.timestamp(justnow)
         self.__appointment_date = ISOFormat(iso_date).value
-
-        # if days == 0:
-        #     self.__appointment_date = 0
-        # else:
-        #     # timestamp is represneted in seconds.microseconds
-        #     # age must be expressed in senconds to be added to the timestap
-        #     self.__appointment_date = self.__issued_at + (days * 24 * 60 * 60)
         self.__date_signature = self.vaccination_signature
 
     def __signature_string(self):
@@ -109,7 +102,7 @@ class VaccinationAppointment:
         appointments_store.add_item(self)
 
     @classmethod
-    def create_appointment_from_json_file(cls, json_file, iso_date) -> 'VaccinationAppointment':
+    def create_appointment_from_json_file(cls, json_file: str, iso_date: str) -> 'VaccinationAppointment':
         """returns the vaccination appointment for the received input json file"""
         appointment_parser = AppointmentJsonParser(json_file)
         cls.is_valid_future(iso_date)
@@ -181,7 +174,7 @@ class VaccinationAppointment:
     @staticmethod
     def is_vaccinated(date_signature: str) -> bool:
         """checks if the patient is vaccinated"""
-        vaccination = VaccinationJsonStore().find_item(date_signature)#, "_VaccinationLog__date_signature")
+        vaccination = VaccinationJsonStore().find_item(date_signature)
         if vaccination is None:
             return False
         return True

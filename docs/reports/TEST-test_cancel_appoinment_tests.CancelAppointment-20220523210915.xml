@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="test_cancel_appoinment_tests.CancelAppointment-20220523210915" tests="14" file="test_cancel_appoinment_tests.py" time="0.156" timestamp="2022-05-23T21:09:16" failures="0" errors="0" skipped="0">
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_cancellation_already_cancelled" time="0.014" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_cancellation_input_file_not_found" time="0.013" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_cancellation_ok" time="0.021" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_date_signature_not_appointed" time="0.013" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_invalid_signature_empty" time="0.014" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_invalid_signature_length" time="0.011" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_past_appointment_date" time="0.011" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_reason_not_valid_empty" time="0.007" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_reason_not_valid_long" time="0.008" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_reason_not_valid_short" time="0.009" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_type_not_accepted" time="0.007" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_cancel_appointment_type_not_string" time="0.006" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_vaccine_cancelled_final" time="0.011" timestamp="2022-05-23T21:09:16"/>
+	<testcase classname="test_cancel_appoinment_tests.CancelAppointment" name="test_vaccine_cancelled_temporal" time="0.011" timestamp="2022-05-23T21:09:16"/>
+</testsuite>

@@ -17,7 +17,7 @@ class VaccineManager:
                                    name_surname,
                                    registration_type,
                                    phone_number,
-                                   age):
+                                   age) -> str:
             """Register the patient into the patients file"""
             my_patient = VaccinePatientRegister(patient_id,
                                                 name_surname,
@@ -28,26 +28,24 @@ class VaccineManager:
             my_patient.save_patient()
             return my_patient.patient_sys_id
 
-        def get_vaccine_date(self, input_file, iso_date):
+        def get_vaccine_date(self, input_file: str, iso_date: str) -> str:
             """Gets an appointment for a registered patient"""
             my_sign = VaccinationAppointment.create_appointment_from_json_file(input_file, iso_date)
             # save the date in store_date.json
             my_sign.save_appointment()
             return my_sign.date_signature
 
-        def vaccine_patient(self, date_signature):
+        def vaccine_patient(self, date_signature: str) -> bool:
             """Register the vaccination of the patient"""
             appointment = VaccinationAppointment.get_appointment_from_date_signature(date_signature)
             return appointment.register_vaccination()
 
-        def cancel_appointment(self, input_file) -> bool:
+        def cancel_appointment(self, input_file: str) -> str:
             """Cancel a vaccination appointment"""
             cancellation = VaccinationAppointment.get_cancellation_from_json_file(input_file)
             appointment = VaccinationAppointment.get_appointment_from_date_signature(cancellation.date_signature)
             VaccinationAppointment.register_cancellation(appointment, cancellation)
             return cancellation.date_signature
-
-
 
     instance = None
 
