@@ -1,6 +1,5 @@
 """Module for testing cancel_appointment"""
 import json
-import os
 import shutil
 import unittest
 from freezegun import freeze_time
