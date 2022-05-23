@@ -98,6 +98,13 @@ class CancelAppointment(unittest.TestCase):
             VaccineManager().cancel_appointment(file_test)
         self.assertEqual(context.exception.message, ExceptionEnum.BAD_CANC_REASON.value)
 
+    def test_cancel_appointment_reason_not_valid_empty(self):
+        """Try to cancel an appointment but the reason is empty"""
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_reason_empty.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, ExceptionEnum.BAD_CANC_REASON.value)
+
     def test_cancel_appointment_type_not_string(self):
         """Test to cancel an appointment but the types is not str"""
         file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_type_not_string.json"
@@ -111,6 +118,20 @@ class CancelAppointment(unittest.TestCase):
         with self.assertRaises(VaccineManagementException) as context:
             VaccineManager().cancel_appointment(file_test)
         self.assertEqual(context.exception.message, ExceptionEnum.BAD_CANC_TYPE.value)
+
+    def test_cancel_appointment_invalid_signature_length(self):
+        """Try to cancel an appointment but the signature format is not valid"""
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_signature_length.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, ExceptionEnum.BAD_DATE_SIGNATURE.value)
+
+    def test_cancel_appointment_invalid_signature_empty(self):
+        """Try to cancel an appointment but the signature is empty"""
+        file_test = JSON_FILES_RF4_PATH + "test_tnot_valid_signature_empty.json"
+        with self.assertRaises(VaccineManagementException) as context:
+            VaccineManager().cancel_appointment(file_test)
+        self.assertEqual(context.exception.message, ExceptionEnum.BAD_DATE_SIGNATURE.value)
 
     def test_cancel_appointment_past_appointment_date(self):
         """Try to cancel an appointment that is already expired (same as first test but without freeze time)"""
